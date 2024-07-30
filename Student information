@@ -1,0 +1,176 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Structure to represent a student
+struct Student {
+    string name;
+    int rollNumber;
+    string department;
+    Student* next;
+
+    // Constructor
+    Student(string n, int roll, string dept) : name(n), rollNumber(roll), department(dept), next(nullptr) {}
+};
+
+class StudentInformationSystem {
+private:
+    Student* head;
+
+public:
+    // Constructor
+    StudentInformationSystem() : head(nullptr) {}
+
+    // Destructor
+    ~StudentInformationSystem() {
+        // Free memory when object is destroyed
+        while (head != nullptr) {
+            Student* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+
+    // Function to add a new student record
+    void addRecord(string name, int rollNumber, string department) {
+        Student* newStudent = new Student(name, rollNumber, department);
+        if (head == nullptr) {
+            head = newStudent;
+        } else {
+            Student* temp = head;
+            while (temp->next != nullptr) {
+                temp = temp->next;
+            }
+            temp->next = newStudent;
+        }
+        cout << "Record added successfully." << endl;
+    }
+
+    // Function to search for a student record
+    void searchRecord(int rollNumber) {
+        Student* temp = head;
+        while (temp != nullptr) {
+            if (temp->rollNumber == rollNumber) {
+                cout << "Record found:" << endl;
+                cout << "Name: " << temp->name << endl;
+                cout << "Roll Number: " << temp->rollNumber << endl;
+                cout << "Department: " << temp->department << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Record not found." << endl;
+    }
+
+    // Function to modify a student record
+    void modifyRecord(int rollNumber, string newName, string newDepartment) {
+        Student* temp = head;
+        while (temp != nullptr) {
+            if (temp->rollNumber == rollNumber) {
+                temp->name = newName;
+                temp->department = newDepartment;
+                cout << "Record modified successfully." << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Record not found." << endl;
+    }
+
+    // Function to delete a student record
+    void deleteRecord(int rollNumber) {
+        if (head == nullptr) {
+            cout << "Record not found." << endl;
+            return;
+        }
+        if (head->rollNumber == rollNumber) {
+            Student* temp = head;
+            head = head->next;
+            delete temp;
+            cout << "Record deleted successfully." << endl;
+            return;
+        }
+        Student* prev = head;
+        Student* curr = head->next;
+        while (curr != nullptr) {
+            if (curr->rollNumber == rollNumber) {
+                prev->next = curr->next;
+                delete curr;
+                cout << "Record deleted successfully." << endl;
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        }
+        cout << "Record not found." << endl;
+    }
+};
+
+int main() {
+    StudentInformationSystem sis;
+
+    int choice;
+    do {
+        cout << "\nMenu:" << endl;
+        cout << "1. Add New Record" << endl;
+        cout << "2. Search a Record" << endl;
+        cout << "3. Modify a Record" << endl;
+        cout << "4. Delete a Record" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                string name, department;
+                int rollNumber;
+                cout << "Enter Name: ";
+                cin.ignore(); // Ignore newline character from previous input
+                getline(cin, name);
+                cout << "Enter Roll Number: ";
+                cin >> rollNumber;
+                cout << "Enter Department: ";
+                cin.ignore(); // Ignore newline character from previous input
+                getline(cin, department);
+                sis.addRecord(name, rollNumber, department);
+                break;
+            }
+            case 2: {
+                int rollNumber;
+                cout << "Enter Roll Number to search: ";
+                cin >> rollNumber;
+                sis.searchRecord(rollNumber);
+                break;
+            }
+            case 3: {
+                int rollNumber;
+                string newName, newDepartment;
+                cout << "Enter Roll Number to modify: ";
+                cin >> rollNumber;
+                cout << "Enter New Name: ";
+                cin.ignore(); // Ignore newline character from previous input
+                getline(cin, newName);
+                cout << "Enter New Department: ";
+                getline(cin, newDepartment);
+                sis.modifyRecord(rollNumber, newName, newDepartment);
+                break;
+            }
+            case 4: {
+                int rollNumber;
+                cout << "Enter Roll Number to delete: ";
+                cin >> rollNumber;
+                sis.deleteRecord(rollNumber);
+                break;
+            }
+            case 5:
+                cout << "Exiting program." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
